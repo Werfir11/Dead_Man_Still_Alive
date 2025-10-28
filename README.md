@@ -1,3 +1,3 @@
-"# Gra"
+# Gra
 
-Unity 6.0 6000.0.60f1
+Unity Version: 6.0 6000.0.60f1
