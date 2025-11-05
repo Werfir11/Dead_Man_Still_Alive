@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class Movement : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public class Movement : MonoBehaviour
             Vmove += (Vector3.left * speed);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) & char_ctrl.isGrounded)
         {
             playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravityValue);
         }
