@@ -7,7 +7,10 @@ public class Movement : MonoBehaviour
     public CharacterController char_ctrl;
     public Rigidbody rb;
     public float speed;
-    public float jump_force;
+    public float jump_height;
+    public float gravityValue;
+
+    Vector3 playerVelocity;
     void Start ()
     {
     }
@@ -29,10 +32,12 @@ public class Movement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Vmove += (Vector3.up * jump_force);
+            playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravityValue);
         }
 
-        char_ctrl.Move(Vmove * Time.deltaTime);
+        playerVelocity.y += gravityValue * Time.deltaTime;
+
+        char_ctrl.Move((Vmove + (playerVelocity.y * Vector3.up))* Time.deltaTime);
     }
 
     
