@@ -12,42 +12,51 @@ public class Movement : MonoBehaviour
     public float gravity_value;
 
     int air_jumps_left;
+    bool jumped;
+
 
     Vector3 playerVelocity;
     void Start ()
     {
         air_jumps_left = 1;
+        jumped = false;
     }
 
     void Update ()
     {
-
+        
         Vector3 Vmove = new Vector3(0, 0, 0);
 
-        //left
+        //right
         if (Input.GetKey(KeyCode.D))
         {
+           //transform.Rotate(0.0f, 90.0f, 0.0f);
            Vmove += (Vector3.right * speed);
         }
 
-        //right
+        //left
         if (Input.GetKey(KeyCode.A))
         {
+            //transform.Rotate(0.0f, -90.0f, 0.0f);
             Vmove += (Vector3.left * speed);
         }
 
         //jump
         if (Input.GetKeyDown(KeyCode.Space) && (char_ctrl.isGrounded || air_jumps_left != 0))
         {
-            playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravity_value);
             if (!char_ctrl.isGrounded) { air_jumps_left--; Debug.Log("test1"); }
+            playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravity_value);
         }
 
         if (char_ctrl.isGrounded) { air_jumps_left = 1; Debug.Log("dotykam ziemi"); }
 
-        playerVelocity.y += gravity_value * Time.deltaTime; //gravity
+        if (!Input.GetKeyDown(KeyCode.Space) && char_ctrl.isGrounded && playerVelocity.y < 0f) playerVelocity.y = 0f;
+        else playerVelocity.y += gravity_value * Time.deltaTime; //gravity
 
-        char_ctrl.Move((Vmove + (playerVelocity.y * Vector3.up))* Time.deltaTime); //move character
+        Debug.Log("playerVelocity.y = " + playerVelocity.y);
+        Debug.Log("air_jumps_left = " + air_jumps_left);
+
+        char_ctrl.Move((Vmove + (playerVelocity.y * Vector3.up)) * Time.deltaTime); //move character
     }
 
     
