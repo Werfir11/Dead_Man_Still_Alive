@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 
@@ -13,6 +14,11 @@ public class Movement : MonoBehaviour
 
     int air_jumps_left;
     bool jumped;
+
+    [Header("References")]
+
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Transform groundCheck;
 
 
     Vector3 playerVelocity;
@@ -42,22 +48,46 @@ public class Movement : MonoBehaviour
         }
 
         //jump
-        if (Input.GetKeyDown(KeyCode.Space) && (char_ctrl.isGrounded || air_jumps_left != 0))
+
+        if (isGrounded())
         {
-            if (!char_ctrl.isGrounded) { air_jumps_left--; Debug.Log("test1"); }
-            playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravity_value);
+            air_jumps_left = 1;
         }
 
-        if (char_ctrl.isGrounded) { air_jumps_left = 1; Debug.Log("dotykam ziemi"); }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (isGrounded())
+            {
+                playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravity_value);
+            }
+            else if (air_jumps_left > 0)
+            {
+                playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravity_value);
+                air_jumps_left--;
+            }
+        }
 
-        if (!Input.GetKeyDown(KeyCode.Space) && char_ctrl.isGrounded && playerVelocity.y < 0f) playerVelocity.y = 0f;
-        else playerVelocity.y += gravity_value * Time.deltaTime; //gravity
 
-        Debug.Log("playerVelocity.y = " + playerVelocity.y);
-        Debug.Log("air_jumps_left = " + air_jumps_left);
-
-        char_ctrl.Move((Vmove + (playerVelocity.y * Vector3.up)) * Time.deltaTime); //move character
+    /*if (Input.GetKeyDown(KeyCode.Space) && (char_ctrl.isGrounded || air_jumps_left != 0))
+    {
+        if (!char_ctrl.isGrounded) { air_jumps_left--; Debug.Log("test1"); }
+        playerVelocity.y = Mathf.Sqrt(jump_height * -2.0f * gravity_value);
     }
 
-    
+    if (char_ctrl.isGrounded) { air_jumps_left = 1; Debug.Log("dotykam ziemi"); }
+    */
+    if (!Input.GetKeyDown(KeyCode.Space) && char_ctrl.isGrounded && playerVelocity.y < 0f) playerVelocity.y = 0f;
+    else playerVelocity.y += gravity_value * Time.deltaTime; //gravity
+
+    Debug.Log("playerVelocity.y = " + playerVelocity.y);
+    Debug.Log("air_jumps_left = " + air_jumps_left);
+
+    char_ctrl.Move((Vmove + (playerVelocity.y * Vector3.up)) * Time.deltaTime); //move character
+    }
+
+    private bool isGrounded()
+    {
+        return Physics.OverlapSphere(groundCheck.position, .5f, groundLayer).Length > 0;
+    }
+
 }
